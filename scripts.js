@@ -1,97 +1,138 @@
 
 function handleSearch(inputText){
     const suggestionBox = document.getElementById('suggestions');
-    if (inputText.length<3){
+    if (inputText.length<4){
         suggestionBox.style.display = "none";
 
     }else{
         suggestionBox.style.display = 'flex';
         filteredData = getSortedData(inputText);
-        addSuggestion(filteredData, inputText);
+        addSuggestion(filteredData);
         console.log('testing');
     }
 }
 
-function disableSearch(){
-    disableSearchStyle()
-    resetSearch()
-}
+
 
 function activeSearchStyle(){
-    const header = document.getElementById("content");
-    header.style.flex = "9";
+    const content = document.getElementById("content");
+    content.style.flex = "9";
     const searchBox = document.getElementById("search-box");
     searchBox.style.top = "7%"
+    searchBox.style.display = 'block'
 }
 
 function disableSearchStyle(){
-    const header = document.getElementById("content");
-    header.style.flex = "1";
+    const header = document.getElementById("header");
+    header.textContent = '';
+    const content = document.getElementById("content");
+    content.textContent = '';
+    content.style.flex = "1";
     const searchBox = document.getElementById("search-box");
     searchBox.style.top = "48%";
+    searchBox.style.display = 'block'
+    
+    const searchBar = document.getElementById("search")
+    searchBar.value = '';
+
+    const suggestionBox = document.getElementById("suggestions")
+    suggestionBox.style.display = "none";
 }
 
 
 
 function getSortedData(inputText){
-    //const dataset= window.localStorage.getItem('data');
-    console.log(dataset)
     const result = dataset.filter((item) => checkTextExist(item,inputText));
     return result;
 }
 
 function checkTextExist(item,text){
     const textLC = text.toLowerCase()
-    for(let i in item){
-        const itemContentLC = item[i].toString().toLowerCase();
-        if(itemContentLC.indexOf(textLC) !== -1){
-            return true;
-        }
+    const type = item['type'];
+    let inputString = '';
+    if(type === 'person'){
+        inputString = item['firstname'] + ' ' + item['lastname'];
+    }else if(type === 'place'){
+        inputString = item['name']
+    }else if(type === 'quote'){
+        inputString = item['title']
     }
-    return false;
+    return inputString.toLowerCase().includes(textLC);
 }
 
-function getTextContent(item,text){
-    const textLC = text.toLowerCase()
-    for(let i in item){
-        const itemContentLC = item[i].toLowerCase();
-        if(itemContentLC.indexOf(textLC) !== -1){
-            return item[i];
-        }
+function getTextContent(item){
+    const type = item['type'];
+    if(type === 'person'){
+        return item['firstname'] + ' ' + item['lastname'];
+    }else if(type === 'place'){
+        return item['name']
+    }else if(type === 'quote'){
+        return item['title']
     }
-    return '';
 }
 
-function addSuggestion(filteredItems, text){
+function clickSuggestion(clickedItem){
+    const filteredItems = JSON.parse(window.localStorage.getItem('filteredItems'));
+    const content = document.getElementById('content')
+    const searchBox = document.getElementById('search-box');
+    searchBox.style.display = 'none';
+
+    const key = clickedItem.getAttribute('key');
+
+    const selectedInfos = filteredItems[key];
+    console.log(key)
+    const image = document.createElement('img');
+    image.src = selectedInfos['avatar'];
+    content.appendChild(image);
+    for(info in selectedInfos){
+        const topic = document.createElement('h3');
+        const description = document.createElement('h6');
+        topic.textContent = info;
+        description.textContent = selectedInfos[info];
+        content.appendChild(topic);
+        content.appendChild(description);
+    }
+    
+
+    const header = document.getElementById('header');
+    const button = document.createElement('button')
+    button.textContent = getTextContent(selectedInfos);
+    button.onclick =()=> disableSearchStyle();
+    header.appendChild(button);
+}
+
+
+function addSuggestion(filteredItems){
     const suggestionBox = document.getElementById('suggestions');
     suggestionBox.textContent = '';
 
     const itemType ={
-        person:'👤',
-        quote: '&#9662;',
-        place: '&#9733;'
+        "person":'👤',
+        "quote": '&#9662;',
+        "place": '&#9733;'
     }
-    window.localStorage.setItem('filteredItems',filteredItems);
-    for(let i = 0; i<filteredItems.length; i++){
-        const item = filteredItems[i];
-        const div = document.createElement('div');
-        div.innerHTML = itemType[item["type"]] + ' | ' + getTextContent(item,text);
-        div.setAttribute('key',i);
-        suggestionBox.appendChild(div);
-    }
-    
+    window.localStorage.setItem('filteredItems',JSON.stringify(filteredItems));
+    const resultText= document.createElement('div');
+    resultText.textContent = "Result";
+    suggestionBox.appendChild(resultText);
+    if(filteredItems.length === 0){
+        const noneText= document.createElement('div');
+        noneText.textContent = "None";
+        suggestionBox.appendChild(noneText);
+
+    }else{
+        for(let i = 0; i<filteredItems.length; i++){
+            const item = filteredItems[i];
+            const div = document.createElement('div');
+            div.innerHTML = itemType[item["type"]] + '\t' + getTextContent(item);
+            div.setAttribute('key',i);
+            div.onclick=() => clickSuggestion(div);
+            suggestionBox.appendChild(div);
+        }
+    }  
 }
 
-function resetSearch(){
-    const searchBox =  document.getElementById('search-box');
-    searchBox.style.display = 'flex';
-    const searchBar = document.getElementById('search');
-    searchBar.value = '';
-    const content = document.getElementById('content');
-    content.textContent = '';
-    const header = document.getElementById('header');
-    header.textContent = '';
-}
+
 
 
 //below is hard coded data
