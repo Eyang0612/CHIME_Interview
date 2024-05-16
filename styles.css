@@ -114,6 +114,10 @@ img{
     background-color: var(--violet);
 }
 
+.suggestions-item:active :first-child{
+    background-color: var(--violet);
+}
+
 span{
     background-color: var(--chime-grey-light);
     text-decoration: underline;
