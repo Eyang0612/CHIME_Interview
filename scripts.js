@@ -1,19 +1,18 @@
-
+// Handles the search input and displays suggestions if the input length is greater than 3 characters
 function handleSearch(inputText){
     const suggestionBox = document.getElementById('suggestions');
     if (inputText.length<4){
-        suggestionBox.style.display = "none";
+        suggestionBox.style.display = "none"; // Hides suggestionBox
 
     }else{
-        suggestionBox.style.display = 'flex';
+        suggestionBox.style.display = 'flex'; // display suggestionBox
         filteredData = getSortedData(inputText);
         addSuggestion(filteredData,inputText);
-        console.log('testing');
     }
 }
 
 
-
+// Activates the search style, modifying the layout and appearance of elements for an active search
 function activeSearchStyle(){
     const label = document.querySelector('label')
     label.textContent = '❎';
@@ -28,6 +27,7 @@ function activeSearchStyle(){
 
 }
 
+// Disables the search style, reverting the layout and appearance of elements to their default state
 function disableSearchStyle(){
     const label = document.querySelector('label')
     label.onclick = '';
@@ -54,12 +54,13 @@ function disableSearchStyle(){
 }
 
 
-
+// Filters and sorts the dataset based on the input text
 function getSortedData(inputText){
     const result = dataset.filter((item) => checkTextExist(item,inputText));
     return result;
 }
 
+// Checks if the input text exists in the item, which varies based on item type
 function checkTextExist(item,text){
     const textLC = text.toLowerCase()
     const type = item['type'];
@@ -74,6 +75,7 @@ function checkTextExist(item,text){
     return inputString.toLowerCase().includes(textLC);
 }
 
+// Retrieves the text content of the item based on its type
 function getTextContent(item){
     const type = item['type'];
     if(type === 'person'){
@@ -85,20 +87,22 @@ function getTextContent(item){
     }
 }
 
+// Handles the click event on a suggestion item, displaying the item's details
 function clickSuggestion(clickedItem){
     const filteredItems = JSON.parse(window.localStorage.getItem('filteredItems'));
     const imgContent = document.getElementById('img-content');
     const textContent = document.getElementById('text-content');
     const searchBox = document.getElementById('search-box');
     searchBox.style.display = 'none';
-
     const key = clickedItem.getAttribute('key');
+    const selectedInfos = filteredItems[key]; // Get selected item details
 
-    const selectedInfos = filteredItems[key];
-    console.log(key)
+    // Append selected item's image to img-content box
     const image = document.createElement('img');
     image.src = selectedInfos['avatar'];
     imgContent.appendChild(image);
+
+    // Append selected item's text to text-content box
     for(info in selectedInfos){
         if(info !== 'avatar'){
         const topic = document.createElement('p');
@@ -110,7 +114,7 @@ function clickSuggestion(clickedItem){
         }
     }
     
-
+    // Create header button for exiting
     const header = document.getElementById('header');
     const button = document.createElement('button')
     button.textContent = getTextContent(selectedInfos);
@@ -118,6 +122,7 @@ function clickSuggestion(clickedItem){
     header.appendChild(button);
 }
 
+// Highlights the substring within the string by wrapping it in a span element
 function highlightSubString(string, substring){
     const index = string.toLowerCase().indexOf(substring.toLowerCase());
     const firstSubString = string.substring(0, index)
@@ -126,25 +131,28 @@ function highlightSubString(string, substring){
     return firstSubString + centerSubString + lastSubString;
 }
 
+// Adds suggestions to the suggestion box based on filtered items and the input substring
 function addSuggestion(filteredItems, substring){
     const suggestionBox = document.getElementById('suggestions');
     suggestionBox.textContent = '';
-
     const itemType ={
         "person":'👤',
         "quote": '💬',
         "place": '⭐'
     }
+
+    // Store filteredItems into localStorage for Retrieval
     window.localStorage.setItem('filteredItems',JSON.stringify(filteredItems));
     const resultText= document.createElement('div');
     resultText.textContent = "Result";
-    suggestionBox.appendChild(resultText);
-    if(filteredItems.length === 0){
+    suggestionBox.appendChild(resultText); // Add "result" text
+
+    if(filteredItems.length === 0){ // Add "None" text if no results
         const noneText= document.createElement('div');
         noneText.textContent = "None";
         suggestionBox.appendChild(noneText);
 
-    }else{
+    }else{ // Append suggestions to suggestions box
         for(let i = 0; i<filteredItems.length; i++){
             const item = filteredItems[i];
             const div = document.createElement('div');
