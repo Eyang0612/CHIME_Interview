@@ -7,7 +7,7 @@ function handleSearch(inputText){
     }else{
         suggestionBox.style.display = 'flex';
         filteredData = getSortedData(inputText);
-        addSuggestion(filteredData);
+        addSuggestion(filteredData,inputText);
         console.log('testing');
     }
 }
@@ -118,8 +118,15 @@ function clickSuggestion(clickedItem){
     header.appendChild(button);
 }
 
+function highlightSubString(string, substring){
+    const index = string.toLowerCase().indexOf(substring.toLowerCase());
+    const firstSubString = string.substring(0, index)
+    const centerSubString = `<span>${string.substring(index,index + substring.length)}</span>`
+    const lastSubString = string.substring(index + substring.length, string.length);
+    return firstSubString + centerSubString + lastSubString;
+}
 
-function addSuggestion(filteredItems){
+function addSuggestion(filteredItems, substring){
     const suggestionBox = document.getElementById('suggestions');
     suggestionBox.textContent = '';
 
@@ -141,7 +148,9 @@ function addSuggestion(filteredItems){
         for(let i = 0; i<filteredItems.length; i++){
             const item = filteredItems[i];
             const div = document.createElement('div');
-            div.innerHTML = itemType[item["type"]] + ' ' + getTextContent(item);
+            const defaultText = itemType[item["type"]] + ' ' + getTextContent(item);
+            const highlightedText = highlightSubString(defaultText,substring)
+            div.innerHTML = highlightedText;
             div.setAttribute('key',i);
             div.setAttribute('class','suggestions-item');
             div.onclick=() => clickSuggestion(div);
@@ -153,7 +162,7 @@ function addSuggestion(filteredItems){
 
 
 
-//below is hard coded data
+//below is hard coded dataset
 
 const dataset = [
     {
