@@ -1,3 +1,16 @@
+:root {
+    --white: #fff;
+    --black: #000;
+    --violet: #6d70c4;
+    --chime-shale-light: #667b82;
+    --chime-shale-dark: #586e75;
+    --chime-grey-light: #93a1a1;
+    --chime-navy-dark: #002b36;
+    --chime-navy-light: #0a3641;
+    --chime-beige-dark: #f0e7d4;
+    --chime-beige-light: #fef6e2;
+  }
+
 body{
     margin: 0;
     box-sizing:border-box;
@@ -9,34 +22,58 @@ body{
 }
 
 #header{
-    background: blue;
+    background: var(--chime-beige-light);
     flex: 1;
-    width: 100vw;
-
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
 }
 
 #content{
-    width: 100vw;
+    width: auto;
     flex: 1;
-    background: red;
-    transition: flex 0.5s ease-in;
+    background: var(--chime-beige-dark);
+    transition: flex 0.5s;
+    display: flex;
 
+    padding: 20px;
+
+}
+#img-content{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+#text-content{
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 #search-box{
     position:absolute;
-    top:48%;
+    top:45%;
+    left:5%;
     background: white;
     border-radius: 5px;
     box-shadow: 0px 0px 25px 0px black;
     padding: 5px;
     height:auto;
-    transition: top 0.5s ease-in;
+    transition: top 0.5s;
     
+}
+
+#search-bar{
+    width:auto;
 }
 
 #search{
     border: 0;
+    height: 100%;
 }
 
 #search:focus{
@@ -47,4 +84,36 @@ body{
 #suggestions{
     display:flex;
     flex-direction: column;
+}
+
+button{
+    background-color: #6d70c4;
+    
+   color: var(--white);
+   
+}
+
+img{
+    min-width:50px;
+    min-height: 50px;
+    border: solid white 5px;
+    border-radius:3px;
+    box-shadow: 0px 0px 0px 3px var(--black);
+}
+
+.suggestions-item{
+    color:--black;
+    background-color: white;
+    transition: all 0.2s;
+}
+.suggestions-item:hover{
+    background-color: var(--chime-grey-light);
+}
+
+.suggestions-item:active{
+    background-color: var(--violet);
+}
+
+p{
+    margin: 0;
 }

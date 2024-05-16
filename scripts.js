@@ -15,25 +15,39 @@ function handleSearch(inputText){
 
 
 function activeSearchStyle(){
+    const label = document.querySelector('label')
+    label.textContent = '❎';
+    label.onclick = () => disableSearchStyle();
     const content = document.getElementById("content");
     content.style.flex = "9";
     const searchBox = document.getElementById("search-box");
     searchBox.style.top = "7%"
     searchBox.style.display = 'block'
+    const search = document.getElementById("search")
+    search.style.width = '200px'
+
 }
 
 function disableSearchStyle(){
+    const label = document.querySelector('label')
+    label.onclick = '';
+    label.textContent = '🔎';
     const header = document.getElementById("header");
     header.textContent = '';
     const content = document.getElementById("content");
-    content.textContent = '';
     content.style.flex = "1";
+    const imgContent = document.getElementById("img-content")
+    imgContent.textContent = '';
+    const textContent = document.getElementById('text-content')
+    textContent.textContent = '';
+
     const searchBox = document.getElementById("search-box");
-    searchBox.style.top = "48%";
+    searchBox.style.top = "45%";
     searchBox.style.display = 'block'
     
-    const searchBar = document.getElementById("search")
-    searchBar.value = '';
+    const search = document.getElementById("search")
+    search.style.minWidth = 'auto'
+    search.value = '';
 
     const suggestionBox = document.getElementById("suggestions")
     suggestionBox.style.display = "none";
@@ -73,7 +87,8 @@ function getTextContent(item){
 
 function clickSuggestion(clickedItem){
     const filteredItems = JSON.parse(window.localStorage.getItem('filteredItems'));
-    const content = document.getElementById('content')
+    const imgContent = document.getElementById('img-content');
+    const textContent = document.getElementById('text-content');
     const searchBox = document.getElementById('search-box');
     searchBox.style.display = 'none';
 
@@ -83,14 +98,16 @@ function clickSuggestion(clickedItem){
     console.log(key)
     const image = document.createElement('img');
     image.src = selectedInfos['avatar'];
-    content.appendChild(image);
+    imgContent.appendChild(image);
     for(info in selectedInfos){
-        const topic = document.createElement('h3');
-        const description = document.createElement('h6');
+        if(info !== 'avatar'){
+        const topic = document.createElement('p');
+        const description = document.createElement('h3');
         topic.textContent = info;
         description.textContent = selectedInfos[info];
-        content.appendChild(topic);
-        content.appendChild(description);
+        textContent.appendChild(topic);
+        textContent.appendChild(description);
+        }
     }
     
 
@@ -108,8 +125,8 @@ function addSuggestion(filteredItems){
 
     const itemType ={
         "person":'👤',
-        "quote": '&#9662;',
-        "place": '&#9733;'
+        "quote": '💬',
+        "place": '⭐'
     }
     window.localStorage.setItem('filteredItems',JSON.stringify(filteredItems));
     const resultText= document.createElement('div');
@@ -124,8 +141,9 @@ function addSuggestion(filteredItems){
         for(let i = 0; i<filteredItems.length; i++){
             const item = filteredItems[i];
             const div = document.createElement('div');
-            div.innerHTML = itemType[item["type"]] + '\t' + getTextContent(item);
+            div.innerHTML = itemType[item["type"]] + ' ' + getTextContent(item);
             div.setAttribute('key',i);
+            div.setAttribute('class','suggestions-item');
             div.onclick=() => clickSuggestion(div);
             suggestionBox.appendChild(div);
         }
